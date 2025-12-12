@@ -3,7 +3,7 @@ module.exports = {
   singleQuote: true,
 
   // 세미콜론 사용 여부
-  semi: true,
+  semi: false,
 
   // 들여쓰기 공백 수
   tabWidth: 2,

@@ -1,6 +1,6 @@
 // 임시 진입점 페이지 (Landing Page 역할)
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react'
+import { Link } from 'react-router-dom'
 
 const GatewayPage: React.FC = () => {
   return (
@@ -22,8 +22,8 @@ const GatewayPage: React.FC = () => {
         * 이 페이지는 프로젝트 최종 배포 시 삭제될 예정입니다.
       </p>
     </div>
-  );
-};
+  )
+}
 
 // 임시 스타일 (실제 프로젝트에서는 CSS/CSS-in-JS 사용)
 const linkStyle: React.CSSProperties = {
@@ -36,6 +36,6 @@ const linkStyle: React.CSSProperties = {
   fontWeight: 'bold',
   color: '#333',
   transition: 'background-color 0.2s',
-};
+}
 
-export default GatewayPage;
+export default GatewayPage

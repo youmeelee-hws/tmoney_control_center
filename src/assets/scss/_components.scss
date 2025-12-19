@@ -1,0 +1,268 @@
+@use 'variables';
+@use 'mixins' as *;
+//badge
+.badge {
+  display: inline-block;
+  border-radius: 8rem;
+  text-align: center;
+  font-size: 1.4rem;
+  height: 3rem;
+  line-height: 3rem;
+  color: #fff;
+  padding: 0 1.6rem;
+  font-weight: 500;
+  &.red {
+    color: #fff !important;
+    background: linear-gradient(180deg, #dc3545 0%, #991320 100%);
+  }
+  &.green {
+    background: linear-gradient(180deg, #20c997 0%, #0d8864 100%);
+    color: #fff !important;
+  }
+  &.orange {
+    color: #fff !important;
+    background: linear-gradient(180deg, #ffc413 0%, #d09200 100%);
+  }
+}
+
+//custom scss
+
+// 전체 컨테이너
+.custom-select-container {
+  font-size: 2.4rem;
+  display: inline-block;
+  &:focus {
+  }
+  &:active {
+  }
+}
+
+// 컨트롤 (메인 박스)
+.custom-select__control {
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease;
+  width: 36rem;
+  box-shadow: none !important;
+  &:hover {
+  }
+  &:focus {
+    box-shadow: 0 0 0 2px #fff !important ;
+  }
+  &:active {
+    box-shadow: 0 0 0 2px #fff !important ;
+  }
+
+  &--is-focused {
+    box-shadow: 0 0 0 2px variables.$primary-color !important ;
+
+    &:hover {
+      border-color: #ddd;
+    }
+  }
+
+  &--is-disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+  }
+}
+
+// 선택된 값 영역
+.custom-select__value-container {
+  padding: 1.2rem 1.6rem;
+}
+
+// placeholder
+.custom-select__placeholder {
+  color: #ccc;
+  font-size: 2.4rem;
+}
+
+// 선택된 값
+.custom-select__single-value {
+  color: #fff !important;
+  font-weight: 500;
+}
+
+// 화살표 아이콘 영역
+.custom-select__indicators {
+  padding-right: 8px;
+  svg {
+    width: 30px !important;
+    height: 30px !important;
+  }
+}
+
+.custom-select__indicator-separator {
+  display: none; // 구분선 제거
+}
+
+// 화살표 아이콘
+.custom-select__dropdown-indicator {
+  color: #eee;
+  padding: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #fff;
+  }
+
+  .custom-select__control--is-focused & {
+    transform: rotate(180deg);
+  }
+}
+
+// 클리어 버튼
+.custom-select__clear-indicator {
+  color: #fff;
+  padding: 8px;
+  cursor: pointer;
+
+  &:hover {
+    color: #e74c3c;
+  }
+}
+
+// 드롭다운 메뉴
+.custom-select__menu {
+  background: #373737 !important;
+  border: none !important;
+  padding: 1.2rem;
+  border-radius: variables.$btn-border-radius;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45) !important;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.custom-select__menu-list {
+  padding: 2rem 0;
+  max-height: 300px;
+
+  // 스크롤바 커스텀
+  &::-webkit-scrollbar {
+    width: 0.8rem;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ffffff;
+    border-radius: 4px;
+
+    &:hover {
+      background: #999;
+    }
+  }
+}
+
+// 각 옵션
+.custom-select__option {
+  padding: 1.8rem 2rem !important;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border-radius: 0.4rem;
+  font-size: 1.5rem;
+  font-weight: 300 !important;
+  // 일반 상태
+  &:hover {
+    background-color: #ffffff30 !important;
+  }
+
+  // 포커스된 옵션
+  &--is-focused {
+    background-color: transparent !important;
+  }
+
+  // 선택된 옵션
+  &--is-selected {
+    background-color: transparent !important;
+    color: #fff;
+    font-weight: 600;
+
+    &:hover {
+    }
+  }
+
+  // 비활성화된 옵션
+  &--is-disabled {
+    color: #ccc;
+    cursor: not-allowed;
+    background-color: transparent;
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
+}
+
+// 검색 입력창
+.custom-select__input-container {
+  margin: 0;
+  padding: 0;
+  color: #fff;
+}
+
+// 멀티 셀렉트 태그
+.custom-select__multi-value {
+  background-color: #e3f2fd;
+  border-radius: 6px;
+  margin: 2px;
+
+  &__label {
+    color: #1976d2;
+    padding: 4px 8px;
+    font-size: 14px;
+  }
+
+  &__remove {
+    color: #1976d2;
+    cursor: pointer;
+    padding: 0 4px;
+    border-radius: 0 6px 6px 0;
+
+    &:hover {
+      background-color: #e74c3c;
+      color: white;
+    }
+  }
+}
+
+// No Options 메시지
+.custom-select__menu-notice {
+  padding: 16px;
+  text-align: center;
+  color: #999;
+}
+
+.tab-box {
+  gap: 0 1rem;
+  display: flex;
+  align-items: center;
+  &.round {
+    .tab {
+      padding: 1rem 2rem;
+      font-size: 1.6rem;
+      font-weight: 200;
+      border-radius: 4rem;
+      display: inline-block;
+      color: #ddd;
+      background: rgba(255, 255, 255, 0.15);
+      &.active {
+        background: variables.$primary-color;
+        color: #fff;
+        font-weight: 500;
+      }
+      &.all {
+        border: 1px solid variables.$primary-color;
+        color: variables.$primary-color;
+        background: none;
+      }
+    }
+  }
+  .tab {
+    cursor: pointer;
+  }
+}

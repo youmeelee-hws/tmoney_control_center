@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Outlet } from 'react-router-dom' // 💡 Outlet 추가 import
 import { RouteConfig } from '@/types/route'
 import PubTestPage from '@/pages/02_Publish/PubTestPage'
@@ -77,7 +77,7 @@ const PubLayout: React.FC = () => (
             <p className="header-tit">Subway turnstile control</p>
             <div className="select-platform">
               <p className="desc">selected station</p>
-              <div className="select-custom">
+              <div className="select-box">
                 <select name="" id="">
                   <option value="Seoul Station">Seoul Station</option>
                 </select>

@@ -2,6 +2,8 @@
 import live from '@/assets/images/live.svg'
 import video from '@/assets/images/video.png'
 import camera from '@/assets/images/camera.svg'
+import arrowPrev from '@/assets/images/arrow-prev.svg'
+import arrowNext from '@/assets/images/arrow-next.svg'
 import Select from 'react-select'
 
 const options = [
@@ -39,82 +41,99 @@ const PubTestPage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="video-box">
-          <div className="video-card">
-            <div className="img">
-              <img src={video} alt="" />
-              <span className="live">live</span>
-              <div className="camera-info">
-                <img src={camera} alt="" />
-                <p className="b-tit">
-                  Seoul Station · Gate-01 Camera CAM-01 live stream seat
-                </p>
+        <div className="video">
+          <p className="desc mb-20">
+            Selected turnstile <strong className="bold">4</strong>/4
+          </p>
+          <div className="video-box">
+            <div className="video-card">
+              <div className="img">
+                <img src={video} alt="" />
+                <span className="live">live</span>
+                <div className="camera-info">
+                  <img src={camera} alt="" />
+                  <p className="b-tit">
+                    Seoul Station · Gate-01 Camera CAM-01 live stream seat
+                  </p>
+                </div>
+              </div>
+              <div className="top-info flex-space-center">
+                <div className="">
+                  <p className="b-tit">Gate-01 · CAM-01</p>
+                  <p className="desc">people/minute ≈ 120</p>
+                </div>
+                <span className="badge green">Normal</span>
+              </div>
+              <div className="bottom-info flex-space-center">
+                <p className="desc">Last frame: 1s ago</p>
+                <div className="nav-btn-box">
+                  <button className="nav-btn">
+                    <img src={arrowPrev} alt="" />
+                  </button>
+                  <button className="nav-btn active">
+                    <img src={arrowNext} alt="" />
+                  </button>
+                </div>
               </div>
             </div>
-            <div className="top-info flex-space-center">
-              <div className="">
-                <p className="b-tit">Gate-01 · CAM-01</p>
-                <p className="desc">people/minute ≈ 120</p>
+            <div className="video-card">
+              <div className="img">
+                <img src={video} alt="" />
+                <span className="live">live</span>
+                <div className="camera-info">
+                  <img src={camera} alt="" />
+                  <p className="b-tit">
+                    Seoul Station · Gate-01 Camera CAM-01 live stream seat
+                  </p>
+                </div>
               </div>
-              <span className="badge green">normal</span>
-            </div>
-            <div className="bottom-info flex-space-center">
-              <p className="desc">Last frame: 1s ago</p>
-              <div className="nav-btn-box">
-                <button className="nav-btn">전</button>
-                <button className="nav-btn">후</button>
+              <div className="top-info flex-space-center">
+                <div className="">
+                  <p className="b-tit">Gate-01 · CAM-01</p>
+                  <p className="desc">people/minute ≈ 120</p>
+                </div>
+                <span className="badge red">Caution</span>
               </div>
-            </div>
-          </div>
-          <div className="video-card">
-            <div className="img">
-              <img src={video} alt="" />
-              <span className="live">live</span>
-              <div className="camera-info">
-                <img src={camera} alt="" />
-                <p className="b-tit">
-                  Seoul Station · Gate-01 Camera CAM-01 live stream seat
-                </p>
-              </div>
-            </div>
-            <div className="top-info flex-space-center">
-              <div className="">
-                <p className="b-tit">Gate-01 · CAM-01</p>
-                <p className="desc">people/minute ≈ 120</p>
-              </div>
-              <span className="badge red">normal</span>
-            </div>
-            <div className="bottom-info flex-space-center">
-              <p className="desc">Last frame: 1s ago</p>
-              <div className="nav-btn-box">
-                <button className="nav-btn">전</button>
-                <button className="nav-btn">후</button>
+              <div className="bottom-info flex-space-center">
+                <p className="desc">Last frame: 1s ago</p>
+                <div className="nav-btn-box">
+                  <button className="nav-btn">
+                    <img src={arrowPrev} alt="" />
+                  </button>
+                  <button className="nav-btn active">
+                    <img src={arrowNext} alt="" />
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="video-card">
-            <div className="img">
-              <img src={video} alt="" />
-              <span className="live">live</span>
-              <div className="camera-info">
-                <img src={camera} alt="" />
-                <p className="b-tit">
-                  Seoul Station · Gate-01 Camera CAM-01 live stream seat
-                </p>
+            <div className="video-card">
+              <div className="img">
+                <img src={video} alt="" />
+                <span className="live">live</span>
+                <div className="camera-info">
+                  <img src={camera} alt="" />
+                  <p className="b-tit">
+                    Seoul Station · Gate-01 Camera CAM-01 live stream seat
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="top-info flex-space-center">
-              <div className="">
-                <p className="b-tit">Gate-01 · CAM-01</p>
-                <p className="desc">people/minute ≈ 120</p>
+              <div className="top-info flex-space-center">
+                <div className="">
+                  <p className="b-tit">Gate-01 · CAM-01</p>
+                  <p className="desc">people/minute ≈ 120</p>
+                </div>
+                <span className="badge orange">confusion</span>
               </div>
-              <span className="badge orange">normal</span>
-            </div>
-            <div className="bottom-info flex-space-center">
-              <p className="desc">Last frame: 1s ago</p>
-              <div className="nav-btn-box">
-                <button className="nav-btn">전</button>
-                <button className="nav-btn">후</button>
+              <div className="bottom-info flex-space-center">
+                <p className="desc">Last frame: 1s ago</p>
+                <div className="nav-btn-box">
+                  <button className="nav-btn">
+                    <img src={arrowPrev} alt="" />
+                  </button>
+                  <button className="nav-btn active">
+                    <img src={arrowNext} alt="" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>

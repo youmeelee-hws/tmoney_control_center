@@ -77,8 +77,18 @@
       background: rgba(255, 255, 255, 0.1);
       .nav {
         &-btn-box {
+          display: flex;
         }
         &-btn {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 0.4rem;
+          width: 3.2rem;
+          height: 3.2rem;
+          margin-left: 1.2rem;
+          @include flex-center;
+          &.active {
+            border: 1px solid #ffffffbd;
+          }
         }
       }
     }
@@ -129,7 +139,7 @@
     }
 
     &-item {
-      background: #ffffff1a;
+      background: #ffffff11;
       padding: 2.4rem;
       border-radius: variables.$cd-border-radius;
       box-shadow: variables.$box-shadow;

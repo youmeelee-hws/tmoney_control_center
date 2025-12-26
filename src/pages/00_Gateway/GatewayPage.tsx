@@ -4,12 +4,34 @@ import { Link } from 'react-router-dom'
 
 const GatewayPage: React.FC = () => {
   return (
-    <div style={{ padding: '40px', textAlign: 'center' }}>
-      <h1>🛠️ 협업 진입 게이트웨이</h1>
-      <p style={{ color: '#666', marginBottom: '30px' }}>
+    <div
+      style={{
+        width: '100vw',
+        height: '100vh',
+        padding: '40px',
+        textAlign: 'center',
+      }}
+    >
+      <h1
+        style={{
+          fontSize: '3rem',
+          fontWeight: 'bold',
+          color: 'black',
+        }}
+      >
+        🛠️ 협업 진입 게이트웨이
+      </h1>
+      <p style={{ fontSize: '2rem', color: '#666', margin: '1.5rem 0' }}>
         원하는 작업 환경으로 이동하여 개발 및 퍼블리싱 현황을 확인하세요.
       </p>
-      <nav style={{ display: 'flex', justifyContent: 'center', gap: '20px' }}>
+      <nav
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          fontSize: '2rem',
+          gap: '20px',
+        }}
+      >
         <Link to="/dev" style={linkStyle}>
           🧑‍💻 개발자 작업 공간
         </Link>
@@ -18,7 +40,7 @@ const GatewayPage: React.FC = () => {
         </Link>
       </nav>
 
-      <p style={{ marginTop: '50px', fontSize: '12px', color: '#aaa' }}>
+      <p style={{ marginTop: '1.5rem', fontSize: '2rem', color: '#aaa' }}>
         * 이 페이지는 프로젝트 최종 배포 시 삭제될 예정입니다.
       </p>
     </div>

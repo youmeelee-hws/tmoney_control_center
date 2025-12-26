@@ -11,12 +11,14 @@
   &-card {
     position: relative;
     overflow: hidden;
-    width: calc(100% / 2 - 2.5rem);
+    // width: calc(100% / 2 - 2.5rem);
+    width : 100%;
     border-radius: variables.$cd-border-radius;
     box-shadow: 3px 3px 20px 5px rgba(0, 0, 0, 0.8);
     .img {
       position: relative;
-      height: 42.9rem;
+      // height: 42.9rem;
+      height: 58rem;
       img {
         width: 100%;
         height: 100%;
@@ -110,6 +112,16 @@
     bottom: 0;
     padding: 3rem;
     height: 100vh;
+    display : none;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+
+    &.open{
+    display : block;
+    pointer-events: auto;
+    transform: translateY(0);
+    }
   }
   .btn-close {
     position: absolute;

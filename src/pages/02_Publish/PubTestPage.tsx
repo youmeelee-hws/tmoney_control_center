@@ -16,7 +16,10 @@ const PubTestPage: React.FC = () => {
     <div className="dashboard-body">
       <div className="container">
         <div className="top-box">
-          <div className="select-area">
+          <div className="title mt-10">
+          Seoul Station
+          </div>
+          {/* <div className="select-area">
             <Select
               className="custom-select-container"
               classNamePrefix="custom-select"
@@ -25,7 +28,7 @@ const PubTestPage: React.FC = () => {
               // value={selectedOption}
               // onChange={setSelectedOption}
             />
-          </div>
+          </div> */}
           <p className="live">
             <img src={live} alt="" />
             LIVE streaming
@@ -42,14 +45,14 @@ const PubTestPage: React.FC = () => {
           </div>
         </div>
         <div className="video">
-          <p className="desc mb-20">
+          {/* <p className="desc mb-20">
             Selected turnstile <strong className="bold">4</strong>/4
-          </p>
+          </p> */}
           <div className="video-box">
             <div className="video-card">
               <div className="img">
                 <img src={video} alt="" />
-                <span className="live">live</span>
+                {/* <span className="live">live</span> */}
                 <div className="camera-info">
                   <img src={camera} alt="" />
                   <p className="b-tit">
@@ -64,7 +67,7 @@ const PubTestPage: React.FC = () => {
                 </div>
                 <span className="badge green">Normal</span>
               </div>
-              <div className="bottom-info flex-space-center">
+              {/* <div className="bottom-info flex-space-center">
                 <p className="desc">Last frame: 1s ago</p>
                 <div className="nav-btn-box">
                   <button className="nav-btn">
@@ -74,9 +77,9 @@ const PubTestPage: React.FC = () => {
                     <img src={arrowNext} alt="" />
                   </button>
                 </div>
-              </div>
+              </div> */}
             </div>
-            <div className="video-card">
+            {/* <div className="video-card">
               <div className="img">
                 <img src={video} alt="" />
                 <span className="live">live</span>
@@ -135,7 +138,7 @@ const PubTestPage: React.FC = () => {
                   </button>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

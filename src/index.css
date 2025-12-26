@@ -22,8 +22,9 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  /* display: flex; */
+  /* place-items: center; */
+  /* 1226 t */
   min-width: 320px;
   min-height: 100vh;
 }

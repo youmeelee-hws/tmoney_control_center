@@ -204,15 +204,26 @@ input {
       outline: none;
       border: 1px solid #ffffff36;
       box-shadow: none;
-      background: none;
+      background: #555;
+      color : #fff;
+      padding-right: 4rem;
     }
   }
   .utill {
     display: flex;
     align-items: center;
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 3rem;
     button {
-      &:first-child {
-        margin-right: 3rem;
+      &.user-button{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        color: #fff;
+        font-size: 1.4rem;
+        gap: 1rem;
       }
     }
   }
@@ -270,6 +281,7 @@ input {
   bottom: 0;
   .s-title {
     font-size: 1.8rem;
+    // font-size: clamp(1.6rem, 0.5vw + 1.2rem, 2.2rem);
     font-weight: 300;
     color: rgba(255, 255, 255, 0.62);
     padding-bottom: 4rem;
@@ -469,8 +481,8 @@ input {
 }
 .dashboard {
   &-body {
-    margin-left: 33rem;
-    width: calc(100% - 33rem);
+    margin-left: 32rem;
+    width: calc(100% - 32rem);
     padding-top: 7rem;
 
     padding-bottom: 5rem;

@@ -31,7 +31,7 @@ const PubLayout: React.FC = () => {
             <i className="ri-menu-fold-line"></i>
           </button>
 
-          <p className="s-title">Subway Control Center V3</p>
+          <p className="s-title">AI Smart Surveillance Center</p>
         </div>
 
         <nav className="menu">
@@ -40,7 +40,7 @@ const PubLayout: React.FC = () => {
               <div className="menu-item">
                 <p>
                   <img src={mnIco1} alt="" />
-                  <span className="txt">Live Monitoring</span>
+                  <span className="txt">Live Incident Detection</span>
                 </p>
                 <span className="arrow">
                   <img src={arrow} alt="" />
@@ -53,7 +53,6 @@ const PubLayout: React.FC = () => {
 
       <div className="dashboard-wrap">
         <header className="header">
-          {/* 🔔 Notice Box */}
           <div className={`notice-box ${isNoticeOpen ? 'open' : ''}`}>
             <div className="flex-space-center notice-top">
               <p className="value">Active Alerts</p>

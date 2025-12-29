@@ -111,11 +111,11 @@ html {
   box-sizing: border-box;
 
   font-family: 'Poppins' !important;
-  font-size: 10px;
-
+  font-size: clamp(9px, calc(10px + (100vw - 1920px) * 0.002), 14px);
   @media (max-width: 1320px) {
     font-size: 9px !important;
   }
+  
   &::-webkit-scrollbar {
     width: 0.1rem;
   }

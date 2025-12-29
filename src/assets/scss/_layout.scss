@@ -211,10 +211,11 @@ input {
   }
   .utill {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     flex-direction: row;
     justify-content: space-around;
     gap: 3rem;
+    
     button {
       &.user-button{
         display: flex;
@@ -280,8 +281,7 @@ input {
   left: 0;
   bottom: 0;
   .s-title {
-    font-size: 1.8rem;
-    // font-size: clamp(1.6rem, 0.5vw + 1.2rem, 2.2rem);
+    font-size: 1.7rem;
     font-weight: 300;
     color: rgba(255, 255, 255, 0.62);
     padding-bottom: 4rem;
@@ -499,6 +499,7 @@ input {
 
     /* 컨텐츠가 짧아도 최소 화면 높이만큼은 유지 */
     min-height: 100vh;
+    overflow-y: hidden;
   }
   &-wrap {
     width: 100%;

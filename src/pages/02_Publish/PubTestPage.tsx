@@ -38,10 +38,10 @@ const PubTestPage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="video">
+        <div className="video-wrap">
           <div className="video-box">
             <div className="video-card">
-              <div className="img">
+              <div className="video">
                 <img src={video} alt="" />
                 <div className="camera-info">
                   <img src={camera} alt="" />

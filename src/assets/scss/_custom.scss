@@ -1,21 +1,21 @@
 @use 'variables';
 @use 'mixins' as *;
 
-.video {
-  &-box {
+.video-wrap {
+  .video-box {
     display: flex;
     align-items: stretch;
     gap: 2.5rem;
     flex-wrap: wrap;
   }
-  &-card {
+  .video-card {
     position: relative;
     overflow: hidden;
     // width: calc(100% / 2 - 2.5rem);
     width : 100%;
     border-radius: variables.$cd-border-radius;
     box-shadow: 3px 3px 20px 5px rgba(0, 0, 0, 0.8);
-    .img {
+    .video {
       position: relative;
       // height: 58rem;
       height: calc(100vh - 34rem);

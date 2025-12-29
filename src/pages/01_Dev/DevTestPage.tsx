@@ -8,7 +8,7 @@ const DevTestPage: React.FC = () => {
     navigate('/dev/test')
   }
   const goToTest2 = () => {
-    navigate('/dev/test2')
+    navigate('/streaming')
   }
 
   return (

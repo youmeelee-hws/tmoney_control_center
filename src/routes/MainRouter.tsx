@@ -8,7 +8,7 @@ import { devRoutes } from '@/routes/DevRouter'
 import { pubRoutes } from '@/routes/PubRouter'
 
 const routes: RouteConfig[] = [
-  // 1. 게이트웨이 (Root) 라우트
+  // 1. 개발용 게이트웨이 라우트
   {
     path: '/',
     element: <GatewayPage />,

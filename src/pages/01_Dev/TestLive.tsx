@@ -41,8 +41,8 @@ export default function Live() {
 
       <div
         style={{
-          width: '50vw', // TODO 임시
-          height: '50vh', // TODO 임시
+          width: '50vw',
+          height: '50vh',
           border: '1px dashed #999',
           borderRadius: 12,
           display: 'flex',

@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { RouteConfig } from '@/types/route'
 import DevTestPage from '@/pages/01_Dev/DevTestPage'
-import Live from '@/pages/01_Dev/TestLive'
+import LiveTestPage from '@/pages/01_Dev/LiveTestPage'
+import ApiTestPage from '@/pages/01_Dev/ApiTestPage'
 import StreamingPage from '@/pages/01_Dev/StreamingPage'
 import bell from '@/assets/images/bell.svg'
 import set from '@/assets/images/set.svg'
@@ -32,7 +33,7 @@ const DevLayout: React.FC = () => (
             color: 'black',
           }}
         >
-          🧑‍💻 개발자 영역 레이아웃
+          🧑‍💻 개발자 작업 공간
         </h1>
       </header>
 
@@ -70,7 +71,7 @@ const MainLayout: React.FC = () => {
               <div className="menu-item">
                 <p>
                   <img src={mnIco1} alt="" />
-                  <span className="txt">Live Monitoring</span>
+                  <span className="txt">Live Incident Detection</span>
                 </p>
                 <span className="arrow">
                   <img src={arrow} alt="" />
@@ -167,8 +168,12 @@ export const devRoutes: RouteConfig[] = [
         element: <DevTestPage />,
       },
       {
-        path: 'test',
-        element: <Live />,
+        path: 'test1',
+        element: <ApiTestPage />,
+      },
+      {
+        path: 'test2',
+        element: <LiveTestPage />,
       },
     ],
   },

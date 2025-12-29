@@ -115,18 +115,25 @@ const StreamingPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="video">
-          {selectedGate && (
-            <div className="video-box">
-              <div className="video-card">
-                {isMediaServerConnecting ? (
-                  <LoadingSpinner />
-                ) : (
-                  <VideoPlaceholder label={selectedGate?.[0]} />
+        <div className="video-wrap">
+          <div className="video-box">
+            {selectedGate && (
+              <div
+                className={clsx(
+                  'video-card',
+                  isMediaServerConnecting ? 'loading' : ''
                 )}
+              >
+                <div className="video">
+                  {isMediaServerConnecting ? (
+                    <LoadingSpinner />
+                  ) : (
+                    <VideoPlaceholder label={selectedGate?.[0]} />
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>

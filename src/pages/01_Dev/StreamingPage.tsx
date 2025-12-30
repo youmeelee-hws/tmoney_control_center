@@ -128,6 +128,7 @@ const StreamingPage: React.FC = () => {
                   {isMediaServerConnecting ? (
                     <LoadingSpinner />
                   ) : (
+                    // <PlayerSlot key={s.id} streamId={s.id} mode="main" />
                     <VideoPlaceholder label={selectedGate?.[0]} />
                   )}
                 </div>

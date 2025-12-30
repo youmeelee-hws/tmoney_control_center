@@ -15,6 +15,362 @@ import mnIco1 from '@/assets/images/mn-ico1.svg'
 import close from '@/assets/images/close.svg'
 import { capitalizeFirstLetter } from '@/utils/str'
 
+const NewLayout: React.FC = () => {
+  const [isNoticeOpen, setIsNoticeOpen] = useState(false)
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        width: '100vw',
+        height: '100vh',
+        overflow: 'hidden',
+        backgroundColor: '#410d3b',
+      }}
+    >
+      {/* Sidebar */}
+      <div
+        style={{
+          width: '7rem',
+          height: '100vh',
+          backgroundColor: '#410d3b',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          paddingTop: '4.5rem',
+          flexShrink: 0,
+          position: 'relative',
+          zIndex: 100,
+        }}
+      >
+        <div
+          style={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            marginBottom: '3rem',
+          }}
+        >
+          <img src={logo} alt="Tmoney" style={{ maxWidth: '80%' }} />
+        </div>
+
+        <nav style={{ width: '100%' }}>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            <li>
+              <div
+                style={{
+                  padding: '1rem',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                }}
+              >
+                <img src={mnIco1} alt="" />
+              </div>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      {/* Main Content Area */}
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100vh',
+          overflow: 'hidden',
+          position: 'relative',
+        }}
+      >
+        {/* Header */}
+        <header
+          style={{
+            padding: '1.2rem 5rem',
+            background: 'rgba(255, 255, 255, 0.09)',
+            backdropFilter: 'blur(24px)',
+            position: 'relative',
+            zIndex: 5,
+            flexShrink: 0,
+          }}
+        >
+          {/* Notice Box */}
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              right: isNoticeOpen ? 0 : '-40rem',
+              width: '40rem',
+              height: '100vh',
+              backgroundColor: '#2a0a26',
+              padding: '2rem',
+              transition: 'right 0.3s ease',
+              zIndex: 1000,
+              overflowY: 'auto',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '2rem',
+              }}
+            >
+              <p
+                style={{
+                  color: '#fff',
+                  fontSize: '2rem',
+                  fontWeight: 600,
+                  margin: 0,
+                }}
+              >
+                Active Alerts
+              </p>
+              <button
+                onClick={() => setIsNoticeOpen(false)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '0.5rem',
+                }}
+              >
+                <img src={close} alt="close" />
+              </button>
+            </div>
+
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              <li
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  padding: '2rem',
+                  borderRadius: '1rem',
+                  marginBottom: '1.5rem',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '2rem',
+                  }}
+                >
+                  <span
+                    style={{
+                      backgroundColor: '#09dc99',
+                      color: '#fff',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '0.5rem',
+                      fontSize: '1.3rem',
+                    }}
+                  >
+                    Normal
+                  </span>
+                  <p
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '1.4rem',
+                      margin: 0,
+                    }}
+                  >
+                    2025-12-16 AM 08:15
+                  </p>
+                </div>
+
+                <p
+                  style={{
+                    color: '#fff',
+                    fontSize: '1.7rem',
+                    fontWeight: 500,
+                    marginBottom: '0.5rem',
+                  }}
+                >
+                  No issues detected
+                </p>
+                <p
+                  style={{
+                    color: '#efefef',
+                    fontSize: '1.6rem',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  Seoul Station ·
+                </p>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '1.4rem',
+                    marginBottom: '1.5rem',
+                  }}
+                >
+                  Passenger flow is within normal range. No action is required
+                  at this time.
+                </p>
+
+                <button
+                  type="button"
+                  style={{
+                    backgroundColor: '#f08300',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '1rem 2rem',
+                    borderRadius: '0.6rem',
+                    fontSize: '1.4rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                  }}
+                >
+                  View CCTV <img src={arrowWhite} alt="" />
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          {/* Header Content */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '2.8rem',
+              }}
+            >
+              <p
+                style={{
+                  display: 'inline-block',
+                  background: 'rgba(146, 7, 131, 0.43)',
+                  color: '#fff',
+                  padding: '0.8rem 1.2rem',
+                  borderRadius: '3rem',
+                  fontSize: '1.5rem',
+                  margin: 0,
+                }}
+              >
+                AI Smart Surveillance Center
+              </p>
+
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '2.8rem',
+                  paddingLeft: '3rem',
+                  position: 'relative',
+                }}
+              >
+                <div
+                  style={{
+                    content: '""',
+                    position: 'absolute',
+                    left: 0,
+                    height: '1.6rem',
+                    width: '1px',
+                    background: 'rgba(204, 204, 204, 1)',
+                  }}
+                />
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '1.4rem',
+                    margin: 0,
+                  }}
+                >
+                  selected station
+                </p>
+                <div>
+                  <select
+                    style={{
+                      height: '3.6rem',
+                      fontSize: '1.5rem',
+                      padding: '0.8rem 1.2rem',
+                      borderRadius: '0.6rem',
+                      outline: 'none',
+                      border: '1px solid rgba(255, 255, 255, 0.21)',
+                      backgroundColor: '#555',
+                      color: '#fff',
+                      paddingRight: '4rem',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <option value="Seoul Station">Seoul Station</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'flex-end',
+                gap: '3rem',
+              }}
+            >
+              <button
+                onClick={() => setIsNoticeOpen(prev => !prev)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '0.5rem',
+                }}
+              >
+                <img src={bell} alt="notification" />
+              </button>
+              <button
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '0.5rem',
+                }}
+              >
+                <img src={set} alt="settings" />
+              </button>
+              <button
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1rem',
+                  color: '#fff',
+                  fontSize: '1.4rem',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '0.5rem',
+                }}
+              >
+                <img src={user} alt="user" />
+                Login
+              </button>
+            </div>
+          </div>
+        </header>
+
+        {/* Content Area */}
+        <div
+          style={{
+            flex: 1,
+            overflow: 'hidden',
+          }}
+        >
+          <Outlet />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const DevLayout: React.FC = () => (
   <div className="main">
     <div
@@ -171,6 +527,12 @@ export const devRoutes: RouteConfig[] = [
         path: 'test1',
         element: <ApiTestPage />,
       },
+    ],
+  },
+  {
+    path: '/dev',
+    element: <NewLayout />,
+    children: [
       {
         path: 'test2',
         element: <LiveTestPage />,

@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom'
 import { RouteConfig } from '@/types/route'
 import DevTestPage from '@/pages/01_Dev/DevTestPage'
 import LiveTestPage from '@/pages/01_Dev/LiveTestPage'
+import LiveTestPage2 from '@/pages/01_Dev/LiveTestPage2'
 import ApiTestPage from '@/pages/01_Dev/ApiTestPage'
 import StreamingPage from '@/pages/01_Dev/StreamingPage'
 import bell from '@/assets/images/bell.svg'
@@ -536,6 +537,10 @@ export const devRoutes: RouteConfig[] = [
       {
         path: 'test2',
         element: <LiveTestPage />,
+      },
+      {
+        path: 'test3',
+        element: <LiveTestPage2 />,
       },
     ],
   },

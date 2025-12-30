@@ -10,6 +10,9 @@ const DevTestPage: React.FC = () => {
   const goToTest2 = () => {
     navigate('/dev/test2')
   }
+  const goToTest3 = () => {
+    navigate('/dev/test3')
+  }
   const goToStreaming = () => {
     navigate('/streaming')
   }
@@ -60,7 +63,26 @@ const DevTestPage: React.FC = () => {
         onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#40a9ff')}
         onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1890ff')}
       >
-        라이브 스트리밍 테스트
+        라이브 스트리밍 테스트 A
+      </button>
+      <button
+        onClick={goToTest3}
+        style={{
+          minWidth: '30rem',
+          padding: '1.5rem 3rem',
+          fontSize: '2rem',
+          fontWeight: '500',
+          backgroundColor: '#1890ff',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease',
+        }}
+        onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#40a9ff')}
+        onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1890ff')}
+      >
+        라이브 스트리밍 테스트 B
       </button>
       <button
         onClick={goToStreaming}

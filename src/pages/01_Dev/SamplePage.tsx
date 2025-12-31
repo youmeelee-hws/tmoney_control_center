@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
-import { getStreamList } from '@/api/streams'
+import { getStationGates, getGateStreams } from '@/api/streams'
 import TestPlayerSlot from '@/components/TestPlayerSlot'
+import { useStationContext } from '@/routes/DevRouter'
 
 // Helper function for calculating thumbnail columns (temp.tsx와 동일)
 function calcThumbCols(len: number) {
@@ -8,33 +9,61 @@ function calcThumbCols(len: number) {
 }
 
 export default function SamplePage() {
+  // Use context to get selected station from NewLayout
+  const { selectedStation } = useStationContext()
+
   const [streams, setStreams] = React.useState<
-    Array<{ id: string; name: string }>
+    Array<{ id: string; name: string; gateName: string; detected: boolean }>
   >([])
   const [selectedStreamId, setSelectedStreamId] = React.useState<string>('')
 
-  const testStreamList = async () => {
-    try {
-      const r1 = await getStreamList()
-      if (r1?.streams && r1.streams.length > 0) {
-        setStreams(r1.streams)
-        setSelectedStreamId(r1.streams[0].id)
-      }
-    } catch (e: any) {
-      console.debug(e.message)
-    }
-  }
-
+  // Load streams when station changes
   useEffect(() => {
-    testStreamList()
-  }, [])
+    if (!selectedStation) return
 
-  // 스트림 목록이 변경되면 첫 번째 스트림 선택
-  React.useEffect(() => {
-    if (streams.length > 0 && !selectedStreamId) {
-      setSelectedStreamId(streams[0].id)
+    const loadStreamList = async () => {
+      try {
+        // 1. 선택된 역의 모든 게이트 가져오기
+        const gatesResponse = await getStationGates(selectedStation)
+        const allStreams: Array<{
+          id: string
+          name: string
+          gateName: string
+          detected: boolean
+        }> = []
+
+        // 2. 각 게이트의 스트림 가져오기 (게이트당 1개만 존재)
+        for (const gate of gatesResponse.gates) {
+          try {
+            const streamsResponse = await getGateStreams(gate.gateId)
+            if (streamsResponse.streams.length > 0) {
+              const stream = streamsResponse.streams[0] // 게이트당 1개만
+              // 30% 확률로 감지 상태 설정
+              const detected = Math.random() < 0.3
+              allStreams.push({
+                id: stream.streamId,
+                name: stream.name,
+                gateName: gate.name,
+                detected,
+              })
+            }
+          } catch (err) {
+            console.debug(`Failed to load stream for gate ${gate.gateId}`)
+          }
+        }
+
+        setStreams(allStreams)
+        // 첫 번째 스트림 자동 선택
+        if (allStreams.length > 0) {
+          setSelectedStreamId(allStreams[0].id)
+        }
+      } catch (e: any) {
+        console.debug(e.message)
+      }
     }
-  }, [streams, selectedStreamId])
+
+    loadStreamList()
+  }, [selectedStation])
 
   return (
     <div
@@ -95,6 +124,10 @@ export default function SamplePage() {
                     streamId={selectedStreamId}
                     mode="main"
                     selected
+                    detected={
+                      streams.find(s => s.id === selectedStreamId)?.detected ||
+                      false
+                    }
                   />
                 ) : (
                   <div
@@ -150,13 +183,43 @@ export default function SamplePage() {
                 </div>
               ) : (
                 streams.map(stream => (
-                  <TestPlayerSlot
+                  <div
                     key={stream.id}
-                    streamId={stream.id}
-                    mode="thumb"
-                    selected={stream.id === selectedStreamId}
+                    style={{
+                      position: 'relative',
+                      height: '100%',
+                      minHeight: 0,
+                      minWidth: 0,
+                      cursor: 'pointer',
+                      overflow: 'hidden',
+                    }}
                     onClick={() => setSelectedStreamId(stream.id)}
-                  />
+                  >
+                    <TestPlayerSlot
+                      streamId={stream.id}
+                      mode="thumb"
+                      selected={stream.id === selectedStreamId}
+                      onClick={() => setSelectedStreamId(stream.id)}
+                      detected={stream.detected}
+                    />
+                    {/* 게이트 이름 오버레이 */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        bottom: '0.5rem',
+                        left: '0.5rem',
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        color: '#fff',
+                        padding: '0.4rem 0.8rem',
+                        borderRadius: '0.4rem',
+                        fontSize: '1.2rem',
+                        fontWeight: 500,
+                        pointerEvents: 'none',
+                      }}
+                    >
+                      {stream.gateName}
+                    </div>
+                  </div>
                 ))
               )}
             </div>

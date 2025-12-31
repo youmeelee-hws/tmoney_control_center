@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
 import clsx from 'clsx'
-import { getStreamList } from '@/api/streams'
+import { getStationGates, getGateStreams } from '@/api/streams'
 import TestPlayerSlot from '@/components/TestPlayerSlot'
+import { useStationContext } from '@/routes/DevRouter'
 
 type LayoutPreset = '3x3' | '2x2' | '4x4'
 
@@ -19,8 +20,11 @@ const PRESET_CONFIGS: Record<LayoutPreset, PresetConfig> = {
 }
 
 export default function SamplePage2() {
+  // Use context to get selected station from NewLayout
+  const { selectedStation, stations } = useStationContext()
+
   const [streams, setStreams] = React.useState<
-    Array<{ id: string; name: string }>
+    Array<{ id: string; name: string; gateName: string; detected: boolean }>
   >([])
   const [selectedPreset, setSelectedPreset] =
     React.useState<LayoutPreset>('3x3')
@@ -28,20 +32,49 @@ export default function SamplePage2() {
     string | null
   >(null)
 
-  const loadStreamList = async () => {
-    try {
-      const r1 = await getStreamList()
-      if (r1?.streams && r1.streams.length > 0) {
-        setStreams(r1.streams)
-      }
-    } catch (e: any) {
-      console.debug(e.message)
-    }
-  }
-
+  // Load streams when station changes
   useEffect(() => {
+    if (!selectedStation) return
+
+    const loadStreamList = async () => {
+      try {
+        // 1. 선택된 역의 모든 게이트 가져오기
+        const gatesResponse = await getStationGates(selectedStation)
+        const allStreams: Array<{
+          id: string
+          name: string
+          gateName: string
+          detected: boolean
+        }> = []
+
+        // 2. 각 게이트의 스트림 가져오기 (게이트당 1개만 존재)
+        for (const gate of gatesResponse.gates) {
+          try {
+            const streamsResponse = await getGateStreams(gate.gateId)
+            if (streamsResponse.streams.length > 0) {
+              const stream = streamsResponse.streams[0] // 게이트당 1개만
+              // 30% 확률로 감지 상태 설정
+              const detected = Math.random() < 0.3
+              allStreams.push({
+                id: stream.streamId,
+                name: stream.name,
+                gateName: gate.name,
+                detected,
+              })
+            }
+          } catch (err) {
+            console.debug(`Failed to load stream for gate ${gate.gateId}`)
+          }
+        }
+
+        setStreams(allStreams)
+      } catch (e: any) {
+        console.debug(e.message)
+      }
+    }
+
     loadStreamList()
-  }, [])
+  }, [selectedStation])
 
   const currentConfig = PRESET_CONFIGS[selectedPreset]
   const displayStreams = streams.slice(0, currentConfig.maxStreams)
@@ -93,6 +126,7 @@ export default function SamplePage2() {
               fontWeight: 500,
               color: '#fff',
               margin: 0,
+              minWidth: '8rem',
             }}
           >
             레이아웃 프리셋
@@ -138,6 +172,10 @@ export default function SamplePage2() {
               mode="main"
               selected
               onClick={() => setFullscreenStreamId(null)}
+              detected={
+                streams.find(s => s.id === fullscreenStreamId)?.detected ||
+                false
+              }
             />
           </div>
         ) : (
@@ -164,7 +202,12 @@ export default function SamplePage2() {
                 }}
                 onClick={() => handleStreamClick(stream.id)}
               >
-                <TestPlayerSlot streamId={stream.id} mode="main" selected />
+                <TestPlayerSlot
+                  streamId={stream.id}
+                  mode="main"
+                  selected
+                  detected={stream.detected}
+                />
               </div>
             ))}
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, createContext, useContext } from 'react'
 import { Outlet } from 'react-router-dom'
 import { RouteConfig } from '@/types/route'
 import DevTestPage from '@/pages/01_Dev/DevTestPage'
@@ -17,9 +17,47 @@ import arrowWhite from '@/assets/images/arrow-w.svg'
 import mnIco1 from '@/assets/images/mn-ico1.svg'
 import close from '@/assets/images/close.svg'
 import { capitalizeFirstLetter } from '@/utils/str'
+import { getStations, type Station } from '@/api/streams'
+
+// Context for sharing selected station
+type StationContextType = {
+  selectedStation: string
+  setSelectedStation: (stationId: string) => void
+  stations: Station[]
+}
+
+const StationContext = createContext<StationContextType | null>(null)
+
+export const useStationContext = () => {
+  const context = useContext(StationContext)
+  if (!context) {
+    throw new Error(
+      'useStationContext must be used within StationContext.Provider'
+    )
+  }
+  return context
+}
 
 const NewLayout: React.FC = () => {
-  const [isNoticeOpen, setIsNoticeOpen] = useState(false)
+  const alertCount = 3 // 알림 개수 (실제로는 API나 state에서 가져올 값)
+  const [stations, setStations] = useState<Station[]>([])
+  const [selectedStation, setSelectedStation] = useState<string>('')
+
+  // Load stations on mount
+  useEffect(() => {
+    const loadStations = async () => {
+      try {
+        const response = await getStations()
+        setStations(response.stations)
+        if (response.stations.length > 0) {
+          setSelectedStation(response.stations[0].stationId)
+        }
+      } catch (error) {
+        console.error('Failed to load stations:', error)
+      }
+    }
+    loadStations()
+  }, [])
 
   return (
     <div
@@ -98,142 +136,6 @@ const NewLayout: React.FC = () => {
             flexShrink: 0,
           }}
         >
-          {/* Notice Box */}
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              right: isNoticeOpen ? 0 : '-40rem',
-              width: '40rem',
-              height: '100vh',
-              backgroundColor: '#2a0a26',
-              padding: '2rem',
-              transition: 'right 0.3s ease',
-              zIndex: 1000,
-              overflowY: 'auto',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '2rem',
-              }}
-            >
-              <p
-                style={{
-                  color: '#fff',
-                  fontSize: '2rem',
-                  fontWeight: 600,
-                  margin: 0,
-                }}
-              >
-                Active Alerts
-              </p>
-              <button
-                onClick={() => setIsNoticeOpen(false)}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '0.5rem',
-                }}
-              >
-                <img src={close} alt="close" />
-              </button>
-            </div>
-
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              <li
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                  padding: '2rem',
-                  borderRadius: '1rem',
-                  marginBottom: '1.5rem',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '2rem',
-                  }}
-                >
-                  <span
-                    style={{
-                      backgroundColor: '#09dc99',
-                      color: '#fff',
-                      padding: '0.5rem 1rem',
-                      borderRadius: '0.5rem',
-                      fontSize: '1.3rem',
-                    }}
-                  >
-                    Normal
-                  </span>
-                  <p
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      fontSize: '1.4rem',
-                      margin: 0,
-                    }}
-                  >
-                    2025-12-16 AM 08:15
-                  </p>
-                </div>
-
-                <p
-                  style={{
-                    color: '#fff',
-                    fontSize: '1.7rem',
-                    fontWeight: 500,
-                    marginBottom: '0.5rem',
-                  }}
-                >
-                  No issues detected
-                </p>
-                <p
-                  style={{
-                    color: '#efefef',
-                    fontSize: '1.6rem',
-                    marginBottom: '1rem',
-                  }}
-                >
-                  Seoul Station ·
-                </p>
-                <p
-                  style={{
-                    color: 'rgba(255, 255, 255, 0.7)',
-                    fontSize: '1.4rem',
-                    marginBottom: '1.5rem',
-                  }}
-                >
-                  Passenger flow is within normal range. No action is required
-                  at this time.
-                </p>
-
-                <button
-                  type="button"
-                  style={{
-                    backgroundColor: '#f08300',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '1rem 2rem',
-                    borderRadius: '0.6rem',
-                    fontSize: '1.4rem',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                  }}
-                >
-                  View CCTV <img src={arrowWhite} alt="" />
-                </button>
-              </li>
-            </ul>
-          </div>
-
           {/* Header Content */}
           <div
             style={{
@@ -293,6 +195,8 @@ const NewLayout: React.FC = () => {
                 </p>
                 <div>
                   <select
+                    value={selectedStation}
+                    onChange={e => setSelectedStation(e.target.value)}
                     style={{
                       height: '3.6rem',
                       fontSize: '1.5rem',
@@ -306,7 +210,11 @@ const NewLayout: React.FC = () => {
                       cursor: 'pointer',
                     }}
                   >
-                    <option value="Seoul Station">Seoul Station</option>
+                    {stations.map(station => (
+                      <option key={station.stationId} value={station.stationId}>
+                        {station.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -320,15 +228,37 @@ const NewLayout: React.FC = () => {
               }}
             >
               <button
-                onClick={() => setIsNoticeOpen(prev => !prev)}
                 style={{
                   background: 'transparent',
                   border: 'none',
                   cursor: 'pointer',
                   padding: '0.5rem',
+                  position: 'relative',
                 }}
               >
                 <img src={bell} alt="notification" />
+                {alertCount > 0 && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '0',
+                      right: '0',
+                      minWidth: '1.8rem',
+                      height: '1.8rem',
+                      backgroundColor: '#f6335a',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '1.1rem',
+                      fontWeight: 'bold',
+                      padding: '0 0.4rem',
+                    }}
+                  >
+                    {alertCount}
+                  </span>
+                )}
               </button>
               <button
                 style={{
@@ -367,7 +297,11 @@ const NewLayout: React.FC = () => {
             overflow: 'hidden',
           }}
         >
-          <Outlet />
+          <StationContext.Provider
+            value={{ selectedStation, setSelectedStation, stations }}
+          >
+            <Outlet />
+          </StationContext.Provider>
         </div>
       </div>
     </div>
@@ -375,7 +309,7 @@ const NewLayout: React.FC = () => {
 }
 
 const NewLayout2: React.FC = () => {
-  const [isNoticeOpen, setIsNoticeOpen] = useState(false)
+  const alertCount = 5 // 알림 개수 (실제로는 API나 state에서 가져올 값)
 
   return (
     <div
@@ -461,7 +395,6 @@ const NewLayout2: React.FC = () => {
           }}
         >
           <button
-            onClick={() => setIsNoticeOpen(prev => !prev)}
             style={{
               background: 'transparent',
               border: 'none',
@@ -471,17 +404,28 @@ const NewLayout2: React.FC = () => {
             }}
           >
             <img src={bell} alt="알림" />
-            <span
-              style={{
-                position: 'absolute',
-                top: '0',
-                right: '0',
-                width: '1rem',
-                height: '1rem',
-                backgroundColor: '#f6335a',
-                borderRadius: '50%',
-              }}
-            />
+            {alertCount > 0 && (
+              <span
+                style={{
+                  position: 'absolute',
+                  top: '0',
+                  right: '0',
+                  minWidth: '1.8rem',
+                  height: '1.8rem',
+                  backgroundColor: '#f6335a',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#fff',
+                  fontSize: '1.1rem',
+                  fontWeight: 'bold',
+                  padding: '0 0.4rem',
+                }}
+              >
+                {alertCount}
+              </span>
+            )}
           </button>
           <button
             style={{
@@ -511,141 +455,6 @@ const NewLayout2: React.FC = () => {
           </button>
         </div>
       </header>
-
-      {/* 알림 패널 */}
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          right: isNoticeOpen ? 0 : '-40rem',
-          width: '40rem',
-          height: '100vh',
-          backgroundColor: '#2a0a26',
-          padding: '2rem',
-          transition: 'right 0.3s ease',
-          zIndex: 1001,
-          overflowY: 'auto',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '2rem',
-          }}
-        >
-          <p
-            style={{
-              color: '#fff',
-              fontSize: '2rem',
-              fontWeight: 600,
-              margin: 0,
-            }}
-          >
-            Active Alerts
-          </p>
-          <button
-            onClick={() => setIsNoticeOpen(false)}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '0.5rem',
-            }}
-          >
-            <img src={close} alt="닫기" />
-          </button>
-        </div>
-
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-          <li
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
-              padding: '2rem',
-              borderRadius: '1rem',
-              marginBottom: '1.5rem',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '2rem',
-              }}
-            >
-              <span
-                style={{
-                  backgroundColor: '#09dc99',
-                  color: '#fff',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '0.5rem',
-                  fontSize: '1.3rem',
-                }}
-              >
-                Normal
-              </span>
-              <p
-                style={{
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  fontSize: '1.4rem',
-                  margin: 0,
-                }}
-              >
-                2025-12-31 PM 02:30
-              </p>
-            </div>
-
-            <p
-              style={{
-                color: '#fff',
-                fontSize: '1.7rem',
-                fontWeight: 500,
-                marginBottom: '0.5rem',
-              }}
-            >
-              No issues detected
-            </p>
-            <p
-              style={{
-                color: '#efefef',
-                fontSize: '1.6rem',
-                marginBottom: '1rem',
-              }}
-            >
-              서울역 ·
-            </p>
-            <p
-              style={{
-                color: 'rgba(255, 255, 255, 0.7)',
-                fontSize: '1.4rem',
-                marginBottom: '1.5rem',
-              }}
-            >
-              모든 게이트가 정상 작동 중입니다.
-            </p>
-
-            <button
-              type="button"
-              style={{
-                backgroundColor: '#f08300',
-                color: '#fff',
-                border: 'none',
-                padding: '1rem 2rem',
-                borderRadius: '0.6rem',
-                fontSize: '1.4rem',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-              }}
-            >
-              View CCTV <img src={arrowWhite} alt="" />
-            </button>
-          </li>
-        </ul>
-      </div>
 
       {/* Main Content Area with Sidebar */}
       <div

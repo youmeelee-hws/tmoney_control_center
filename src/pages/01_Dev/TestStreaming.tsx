@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { getStreamList } from '@/api/streams'
+import { getGateStreams } from '@/api/streams'
 import TestPlayerSlot from '@/components/TestPlayerSlot'
 
 export default function TestStreaming() {
@@ -7,9 +7,10 @@ export default function TestStreaming() {
 
   const testStreamList = async () => {
     try {
-      const r1 = await getStreamList()
-      if (r1?.streams?.[0]?.id) {
-        setStreamId(r1.streams[0].id)
+      // Get streams from first gate
+      const r1 = await getGateStreams('gate-001')
+      if (r1?.streams?.[0]?.streamId) {
+        setStreamId(r1.streams[0].streamId)
       }
     } catch (e: any) {
       console.debug(e.message)

@@ -1,38 +1,35 @@
 import React, { useState, useEffect } from 'react'
 import TestPlayerSlot from '@/components/TestPlayerSlot'
+import {
+  getStations,
+  getStationGates,
+  getGateStreams,
+  type Station,
+  type Gate,
+  type Stream,
+} from '@/api/streams'
 
-// Mock data from temp.tsx
+// Type for gate with stream info
 type GateCam = {
   gateId: string
   streamId: string
-}
-
-const mockGatesByStation: Record<string, GateCam[]> = {
-  서울역: [
-    { gateId: 'Gate-01', streamId: 'cam-001' },
-    { gateId: 'Gate-02', streamId: 'cam-002' },
-    { gateId: 'Gate-03', streamId: 'cam-003' },
-    { gateId: 'Gate-04', streamId: 'cam-004' },
-  ],
-  강남역: [
-    { gateId: 'Gate-01', streamId: 'cam-005' },
-    { gateId: 'Gate-02', streamId: 'cam-006' },
-    { gateId: 'Gate-03', streamId: 'cam-007' },
-  ],
-  잠실역: [
-    { gateId: 'Gate-01', streamId: 'cam-008' },
-    { gateId: 'Gate-02', streamId: 'cam-009' },
-  ],
+  gateName: string
+  detected: boolean
 }
 
 type SlotConfig = {
   streamId: string | null
   gateId: string | null
   isDefault: boolean // 기본 슬롯은 삭제 불가
+  detected: boolean
 }
 
 const SamplePage3: React.FC = () => {
-  const [selectedStation, setSelectedStation] = useState<string>('서울역')
+  const [stations, setStations] = useState<Station[]>([])
+  const [selectedStation, setSelectedStation] = useState<string>('')
+  const [gatesByStation, setGatesByStation] = useState<
+    Record<string, GateCam[]>
+  >({})
   const [slots, setSlots] = useState<SlotConfig[]>([])
   const [fullscreenSlotIndex, setFullscreenSlotIndex] = useState<number | null>(
     null
@@ -43,20 +40,92 @@ const SamplePage3: React.FC = () => {
   const [savedConfigs, setSavedConfigs] = useState<
     Array<{ name: string; slots: SlotConfig[] }>
   >([])
+  const [loading, setLoading] = useState(true)
 
-  // 초기 슬롯 설정 (서울역 4개 게이트 + 5개 빈 슬롯)
+  // Load stations on mount
   useEffect(() => {
-    const defaultGates = mockGatesByStation['서울역'].slice(0, 4)
+    const loadStations = async () => {
+      try {
+        const response = await getStations()
+        setStations(response.stations)
+        if (response.stations.length > 0) {
+          setSelectedStation(response.stations[0].stationId)
+        }
+      } catch (error) {
+        console.error('Failed to load stations:', error)
+      }
+    }
+    loadStations()
+  }, [])
+
+  // Load gates when station changes
+  useEffect(() => {
+    if (!selectedStation) return
+
+    const loadGates = async () => {
+      try {
+        const gatesResponse = await getStationGates(selectedStation)
+
+        // For each gate, fetch its stream (게이트당 1개만 존재)
+        const gatesWithStreams: GateCam[] = []
+        for (const gate of gatesResponse.gates) {
+          try {
+            const streamsResponse = await getGateStreams(gate.gateId)
+            if (streamsResponse.streams.length > 0) {
+              // 게이트당 1개의 스트림만 존재
+              const stream = streamsResponse.streams[0]
+              // 30% 확률로 감지 상태 설정
+              const detected = Math.random() < 0.3
+              gatesWithStreams.push({
+                gateId: gate.gateId,
+                streamId: stream.streamId,
+                gateName: gate.name,
+                detected,
+              })
+            }
+          } catch (error) {
+            console.error(
+              `Failed to load streams for gate ${gate.gateId}:`,
+              error
+            )
+          }
+        }
+
+        setGatesByStation(prev => ({
+          ...prev,
+          [selectedStation]: gatesWithStreams,
+        }))
+      } catch (error) {
+        console.error('Failed to load gates:', error)
+      }
+    }
+
+    loadGates()
+  }, [selectedStation])
+
+  // 초기 슬롯 설정 (첫 번째 역의 게이트 + 빈 슬롯)
+  useEffect(() => {
+    if (!selectedStation || !gatesByStation[selectedStation]) return
+    if (slots.length > 0) return // Already initialized
+
+    const defaultGates = gatesByStation[selectedStation].slice(0, 4)
     const initialSlots: SlotConfig[] = [
       ...defaultGates.map(gate => ({
         streamId: gate.streamId,
         gateId: gate.gateId,
         isDefault: true,
+        detected: gate.detected,
       })),
-      ...Array(5).fill({ streamId: null, gateId: null, isDefault: false }),
+      ...Array(Math.max(0, 9 - defaultGates.length)).fill({
+        streamId: null,
+        gateId: null,
+        isDefault: false,
+        detected: false,
+      }),
     ]
     setSlots(initialSlots)
-  }, [])
+    setLoading(false)
+  }, [selectedStation, gatesByStation])
 
   // 슬롯 클릭 핸들러
   const handleSlotClick = (index: number) => {
@@ -86,6 +155,7 @@ const SamplePage3: React.FC = () => {
       streamId: gate.streamId,
       gateId: gate.gateId,
       isDefault: false,
+      detected: gate.detected,
     }
     setSlots(newSlots)
     setSelectedSlotIndex(null)
@@ -97,7 +167,12 @@ const SamplePage3: React.FC = () => {
     if (slot.isDefault) return // 기본 슬롯은 삭제 불가
 
     const newSlots = [...slots]
-    newSlots[index] = { streamId: null, gateId: null, isDefault: false }
+    newSlots[index] = {
+      streamId: null,
+      gateId: null,
+      isDefault: false,
+      detected: false,
+    }
     setSlots(newSlots)
     if (selectedSlotIndex === index) {
       setSelectedSlotIndex(null)
@@ -242,6 +317,7 @@ const SamplePage3: React.FC = () => {
                   mode="main"
                   selected
                   onClick={() => setFullscreenSlotIndex(null)}
+                  detected={slots[fullscreenSlotIndex].detected}
                 />
               )}
             </div>
@@ -286,6 +362,7 @@ const SamplePage3: React.FC = () => {
                         streamId={slot.streamId}
                         mode="main"
                         selected
+                        detected={slot.detected}
                       />
                       {!slot.isDefault && (
                         <button
@@ -380,9 +457,9 @@ const SamplePage3: React.FC = () => {
               cursor: 'pointer',
             }}
           >
-            {Object.keys(mockGatesByStation).map(station => (
-              <option key={station} value={station}>
-                {station}
+            {stations.map(station => (
+              <option key={station.stationId} value={station.stationId}>
+                {station.name}
               </option>
             ))}
           </select>
@@ -409,53 +486,67 @@ const SamplePage3: React.FC = () => {
           <div
             style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
           >
-            {mockGatesByStation[selectedStation]?.map(gate => (
-              <button
-                key={gate.streamId}
-                onClick={() => handleGateSelect(gate)}
-                disabled={selectedSlotIndex === null}
-                style={{
-                  padding: '1.5rem',
-                  backgroundColor:
-                    selectedSlotIndex !== null
-                      ? 'rgba(240, 131, 0, 0.2)'
-                      : 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '0.8rem',
-                  color: '#fff',
-                  fontSize: '1.4rem',
-                  cursor:
-                    selectedSlotIndex !== null ? 'pointer' : 'not-allowed',
-                  textAlign: 'left',
-                  transition: 'all 0.2s',
-                  opacity: selectedSlotIndex !== null ? 1 : 0.6,
-                }}
-                onMouseEnter={e => {
-                  if (selectedSlotIndex !== null) {
-                    e.currentTarget.style.backgroundColor =
-                      'rgba(240, 131, 0, 0.4)'
-                  }
-                }}
-                onMouseLeave={e => {
-                  if (selectedSlotIndex !== null) {
-                    e.currentTarget.style.backgroundColor =
-                      'rgba(240, 131, 0, 0.2)'
-                  }
-                }}
+            {loading ? (
+              <div
+                style={{ color: 'rgba(255, 255, 255, 0.7)', padding: '1.5rem' }}
               >
-                <div style={{ fontWeight: 600, marginBottom: '0.5rem' }}>
-                  {gate.gateId}
-                </div>
-                <div
+                Loading gates...
+              </div>
+            ) : gatesByStation[selectedStation]?.length > 0 ? (
+              gatesByStation[selectedStation].map(gate => (
+                <button
+                  key={gate.streamId}
+                  onClick={() => handleGateSelect(gate)}
+                  disabled={selectedSlotIndex === null}
                   style={{
-                    fontSize: '1.2rem',
-                    color: 'rgba(255, 255, 255, 0.7)',
+                    padding: '1.5rem',
+                    backgroundColor:
+                      selectedSlotIndex !== null
+                        ? 'rgba(240, 131, 0, 0.2)'
+                        : 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '0.8rem',
+                    color: '#fff',
+                    fontSize: '1.4rem',
+                    cursor:
+                      selectedSlotIndex !== null ? 'pointer' : 'not-allowed',
+                    textAlign: 'left',
+                    transition: 'all 0.2s',
+                    opacity: selectedSlotIndex !== null ? 1 : 0.6,
+                  }}
+                  onMouseEnter={e => {
+                    if (selectedSlotIndex !== null) {
+                      e.currentTarget.style.backgroundColor =
+                        'rgba(240, 131, 0, 0.4)'
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (selectedSlotIndex !== null) {
+                      e.currentTarget.style.backgroundColor =
+                        'rgba(240, 131, 0, 0.2)'
+                    }
                   }}
                 >
-                  {gate.streamId}
-                </div>
-              </button>
-            ))}
+                  <div style={{ fontWeight: 600, marginBottom: '0.5rem' }}>
+                    {gate.gateName}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '1.2rem',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                    }}
+                  >
+                    {gate.streamId}
+                  </div>
+                </button>
+              ))
+            ) : (
+              <div
+                style={{ color: 'rgba(255, 255, 255, 0.5)', padding: '1.5rem' }}
+              >
+                No gates available
+              </div>
+            )}
           </div>
         </div>
       </div>

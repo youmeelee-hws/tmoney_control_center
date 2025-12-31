@@ -23,17 +23,19 @@ export default function TestPlayerSlot({
   mode,
   selected = true,
   onClick,
+  detected = false,
 }: {
   streamId: string
   mode: 'main' | 'thumb'
   selected?: boolean
   onClick?: () => void
+  detected?: boolean
 }) {
   const { state, actions } = usePlayerMachine()
   const videoRef = React.useRef<HTMLVideoElement>(null)
 
-  // cam-001, cam-004는 오류 감지 상태
-  const isDetected = streamId === 'cam-001' || streamId === 'cam-004'
+  // detected prop으로 감지 상태 제어
+  const isDetected = detected
   const badgeText = isDetected ? 'Detected' : 'Normal'
   const badgeColor = isDetected ? '#f6335a' : '#09dc99'
 

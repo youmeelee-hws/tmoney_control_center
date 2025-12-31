@@ -7,7 +7,7 @@ function calcThumbCols(len: number) {
   return Math.max(1, Math.min(6, len))
 }
 
-export default function LiveTestPage() {
+export default function SamplePage() {
   const [streams, setStreams] = React.useState<
     Array<{ id: string; name: string }>
   >([])

@@ -23,7 +23,7 @@ type LogEntry = {
   duration?: string
 }
 
-export default function ApiTestPage() {
+export default function TestApi() {
   const [log, setLog] = React.useState<string>('')
 
   const formatLog = (entry: LogEntry) => {

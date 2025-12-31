@@ -18,7 +18,7 @@ const PRESET_CONFIGS: Record<LayoutPreset, PresetConfig> = {
   '4x4': { label: '전체 감시 모드', rows: 4, cols: 4, maxStreams: 16 },
 }
 
-export default function LiveTestPage2() {
+export default function SamplePage2() {
   const [streams, setStreams] = React.useState<
     Array<{ id: string; name: string }>
   >([])

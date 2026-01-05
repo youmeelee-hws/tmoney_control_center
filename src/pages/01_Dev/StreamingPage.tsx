@@ -1,26 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import clsx from 'clsx'
 import live from '@/assets/images/live.svg'
-import camera from '@/assets/images/camera.svg'
-
-function LoadingSpinner() {
-  return (
-    <div className="img">
-      {/* <img src={video} alt="" />
-                <span className="live">live</span> */}
-      <div className="camera-info">
-        <img src={camera} alt="" />
-        <p className="b-tit">미디어 서버에 연결 중...</p>
-      </div>
-    </div>
-  )
-}
 
 function VideoPlaceholder({ label }: { label: string }) {
   return (
     <video
       src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
-      controls
+      // controls
       autoPlay
       muted
       loop
@@ -125,10 +111,7 @@ const StreamingPage: React.FC = () => {
                 )}
               >
                 <div className="video">
-                  {isMediaServerConnecting ? (
-                    <LoadingSpinner />
-                  ) : (
-                    // <PlayerSlot key={s.id} streamId={s.id} mode="main" />
+                  {isMediaServerConnecting ? null : (
                     <VideoPlaceholder label={selectedGate?.[0]} />
                   )}
                 </div>

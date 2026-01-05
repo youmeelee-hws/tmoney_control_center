@@ -4,6 +4,7 @@ import live from '@/assets/images/live.svg'
 import PlayerSlot from '@/components/PlayerSlot'
 
 const StreamingPage: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true)
   // TODO 선택된 지하철역의 gate 목록 조회
   const [gates, setGates] = useState<string[]>()
   // 선택된 gate 목록 관리
@@ -67,14 +68,16 @@ const StreamingPage: React.FC = () => {
         <div className="video-wrap">
           <div className="video-box">
             {selectedGate?.[0] && (
-              <div
-                className={clsx(
-                  'video-card',
-                  selectedGate?.[0] === 'gate-001' ? '' : 'loading'
-                )}
-              >
+              <div className={clsx('video-card', isLoading ? 'loading' : '')}>
                 <div className="video">
-                  <PlayerSlot streamId={'stream-001'} mode="main" />
+                  <PlayerSlot
+                    streamId={'stream-001'}
+                    mode="main"
+                    onStatusChange={status => {
+                      // rendering 상태가 되면 실제 비디오 프레임이 화면에 표시됨
+                      setIsLoading(status !== 'rendering')
+                    }}
+                  />
                 </div>
               </div>
             )}

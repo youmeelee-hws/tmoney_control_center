@@ -5,6 +5,7 @@ type WebRTCPlayerState =
   | 'connecting'
   | 'connected'
   | 'playing'
+  | 'rendering' // 실제 비디오 프레임이 렌더링되기 시작
   | 'error'
   | 'disconnected'
 
@@ -29,6 +30,7 @@ export function useWebRTCPlayer({
   const pcRef = useRef<RTCPeerConnection | null>(null)
   const sessionUrlRef = useRef<string | null>(null)
   const disconnectedRef = useRef(false)
+  const videoEventListenersRef = useRef(false)
 
   // ICE gathering 완료 대기 함수
   const waitIceGatheringComplete = (
@@ -101,7 +103,27 @@ export function useWebRTCPlayer({
         if (evt && evt.streams && evt.streams[0] && videoRef.current) {
           console.log('[WebRTC] Setting srcObject:', evt.streams[0])
           videoRef.current.srcObject = evt.streams[0]
-          setState('playing')
+          setState('connected') // 스트림 연결됨, 아직 렌더링 전
+
+          // 비디오 이벤트 리스너 등록 (한 번만)
+          if (!videoEventListenersRef.current && videoRef.current) {
+            const video = videoRef.current
+
+            // 실제 비디오 프레임이 렌더링되기 시작할 때
+            const handlePlaying = () => {
+              console.log('[WebRTC] Video playing event - first frame rendered')
+              setState('rendering')
+            }
+
+            // loadeddata: 첫 프레임이 로드됨
+            const handleLoadedData = () => {
+              console.log('[WebRTC] Video loadeddata event')
+            }
+
+            video.addEventListener('playing', handlePlaying)
+            video.addEventListener('loadeddata', handleLoadedData)
+            videoEventListenersRef.current = true
+          }
 
           if (autoPlay) {
             videoRef.current.play().catch(err => {
@@ -196,6 +218,9 @@ export function useWebRTCPlayer({
         videoRef.current.srcObject = null
       } catch (e) {}
     }
+
+    // 이벤트 리스너 플래그 초기화
+    videoEventListenersRef.current = false
 
     // PeerConnection 정리
     try {

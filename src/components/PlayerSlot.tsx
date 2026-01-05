@@ -8,12 +8,14 @@ export default function PlayerSlot({
   selected = true,
   onClick,
   detected = false,
+  onStatusChange,
 }: {
   streamId: string
   mode: 'main' | 'thumb'
   selected?: boolean
   onClick?: () => void
   detected?: boolean
+  onStatusChange?: (status: string) => void
 }) {
   const { state, actions } = usePlayerMachine()
   const videoRef = React.useRef<HTMLVideoElement>(null)
@@ -46,6 +48,16 @@ export default function PlayerSlot({
     videoRef,
     autoPlay: true,
   })
+
+  // 상태 변경 시 부모에게 알림
+  React.useEffect(() => {
+    if (onStatusChange) {
+      // WebRTC 상태 우선, 없으면 플레이어 상태
+      // rendering 상태가 되면 실제 비디오가 화면에 표시되고 있음
+      const currentStatus = webrtcState !== 'idle' ? webrtcState : state.status
+      onStatusChange(currentStatus)
+    }
+  }, [state.status, webrtcState, onStatusChange])
 
   // mode가 'thumb'일 때는 썸네일 스타일
   if (mode === 'thumb') {
@@ -106,7 +118,8 @@ export default function PlayerSlot({
             display:
               state.status === 'playing' ||
               webrtcState === 'playing' ||
-              webrtcState === 'connected'
+              webrtcState === 'connected' ||
+              webrtcState === 'rendering'
                 ? 'block'
                 : 'none',
           }}
@@ -115,7 +128,8 @@ export default function PlayerSlot({
         {!(
           state.status === 'playing' ||
           webrtcState === 'playing' ||
-          webrtcState === 'connected'
+          webrtcState === 'connected' ||
+          webrtcState === 'rendering'
         ) && (
           <div
           // style={{
@@ -203,7 +217,8 @@ export default function PlayerSlot({
           display:
             state.status === 'playing' ||
             webrtcState === 'playing' ||
-            webrtcState === 'connected'
+            webrtcState === 'connected' ||
+            webrtcState === 'rendering'
               ? 'block'
               : 'none',
         }}
@@ -212,7 +227,8 @@ export default function PlayerSlot({
       {!(
         state.status === 'playing' ||
         webrtcState === 'playing' ||
-        webrtcState === 'connected'
+        webrtcState === 'connected' ||
+        webrtcState === 'rendering'
       ) && (
         <div
         // style={{

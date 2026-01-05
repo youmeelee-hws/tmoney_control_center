@@ -1,20 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import clsx from 'clsx'
 import live from '@/assets/images/live.svg'
-
-function VideoPlaceholder({ label }: { label: string }) {
-  return (
-    <video
-      src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
-      // controls
-      autoPlay
-      muted
-      loop
-      playsInline
-      style={{ width: 'auto', height: '100%' }}
-    />
-  )
-}
+import PlayerSlot from '@/components/PlayerSlot'
 
 const StreamingPage: React.FC = () => {
   // TODO 선택된 지하철역의 gate 목록 조회
@@ -25,13 +12,8 @@ const StreamingPage: React.FC = () => {
   const getGates = async () => {
     // const response = await getGates()
     // setGates(response.data)
-    setGates([
-      'Gate-01',
-      // 'Gate-02',
-      // 'Gate-03',
-      // 'Gate-04',
-    ])
-    setSelectedGate(['Gate-01'])
+    setGates(['gate-001'])
+    setSelectedGate(['gate-001'])
   }
 
   useEffect(() => {
@@ -50,25 +32,6 @@ const StreamingPage: React.FC = () => {
   const handleSelectGateAll = () => {
     // setSelectedGate(gates)
   }
-
-  // 미디어 서버 연결 시뮬레이션
-  const [isMediaServerConnecting, setIsMediaServerConnecting] = useState(true)
-  useEffect(() => {
-    const connectToMediaServer = async () => {
-      setIsMediaServerConnecting(true)
-      try {
-        // TODO: 실제 미디어 서버 연결 로직
-        // await fetch('/api/media-server/connect')
-        await new Promise(resolve => setTimeout(resolve, 2000)) // 시뮬레이션
-      } catch (error) {
-        console.error('미디어 서버 연결 실패:', error)
-      } finally {
-        setIsMediaServerConnecting(false)
-      }
-    }
-
-    connectToMediaServer()
-  }, [selectedGate]) // selectedGate 변경 시 재연결
 
   return (
     <div className="dashboard-body">
@@ -103,17 +66,15 @@ const StreamingPage: React.FC = () => {
 
         <div className="video-wrap">
           <div className="video-box">
-            {selectedGate && (
+            {selectedGate?.[0] && (
               <div
                 className={clsx(
                   'video-card',
-                  isMediaServerConnecting ? 'loading' : ''
+                  selectedGate?.[0] === 'gate-001' ? '' : 'loading'
                 )}
               >
                 <div className="video">
-                  {isMediaServerConnecting ? null : (
-                    <VideoPlaceholder label={selectedGate?.[0]} />
-                  )}
+                  <PlayerSlot streamId={'stream-001'} mode="main" />
                 </div>
               </div>
             )}

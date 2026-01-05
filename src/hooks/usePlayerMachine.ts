@@ -213,7 +213,7 @@ export function usePlayerMachine() {
     return () => {
       cancelled = true
     }
-  }, [state.status])
+  }, [state.status === 'issuing_ticket' ? state.streamId : null])
 
   // 2) 티켓이 생기면(ready/playing/paused…) 자동 갱신 타이머 + 하드 만료 안전망
   useEffect(() => {
@@ -273,7 +273,7 @@ export function usePlayerMachine() {
 
     let cancelled = false
     const streamId = state.ticket.streamId
-    const keepPlaying = true // 가짜 플레이어 기준: 끊지 않고 계속 재생 유지
+    const keepPlaying = true // WebRTC 플레이어 기준: 끊지 않고 계속 재생 유지
 
     ;(async () => {
       try {
@@ -293,7 +293,7 @@ export function usePlayerMachine() {
     return () => {
       cancelled = true
     }
-  }, [state.status])
+  }, [state.status === 'refreshing_ticket' ? state.ticket.streamId : null])
 
   // 4) reconnecting(backoff) - 실패 시 티켓 발급부터 다시
   useEffect(() => {

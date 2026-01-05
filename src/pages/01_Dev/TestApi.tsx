@@ -34,7 +34,7 @@ export default function TestApi() {
     React.useState<string>('station-001')
   const [selectedGateId, setSelectedGateId] = React.useState<string>('gate-001')
   const [selectedStreamId, setSelectedStreamId] =
-    React.useState<string>('cam-001')
+    React.useState<string>('stream-001')
 
   const formatLog = (entry: LogEntry) => {
     return JSON.stringify(entry, null, 2)

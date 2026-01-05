@@ -1,5 +1,6 @@
 import React from 'react'
 import { usePlayerMachine } from '@/hooks/usePlayerMachine'
+import { useWebRTCPlayer } from '@/hooks/useWebRTCPlayer'
 
 // 애니메이션 스타일 추가
 const style = document.createElement('style')
@@ -39,6 +40,7 @@ export default function TestPlayerSlot({
   const badgeText = isDetected ? 'Detected' : 'Normal'
   const badgeColor = isDetected ? '#f6335a' : '#09dc99'
 
+  // 티켓 발급 및 자동 갱신 관리
   React.useEffect(() => {
     actions.start(streamId)
     return () => actions.disconnect() // unmount 시 정리(중요)
@@ -52,17 +54,28 @@ export default function TestPlayerSlot({
     }
   }, [state.status, actions])
 
-  // 비디오 자동 재생 보장
+  // WebRTC 플레이어 연결 (티켓이 있고 playing 상태일 때만)
+  const whepUrl =
+    state.status === 'playing' ||
+    state.status === 'paused' ||
+    state.status === 'ready' ||
+    state.status === 'connecting' ||
+    state.status === 'refreshing_ticket'
+      ? (state as any).ticket?.whepUrl || ''
+      : ''
+
+  // 디버깅용 로그
   React.useEffect(() => {
-    if (videoRef.current && state.status === 'playing') {
-      const playPromise = videoRef.current.play()
-      if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.debug('Video autoplay failed:', error)
-        })
-      }
-    }
-  }, [state.status])
+    console.log('[TestPlayerSlot] State:', state.status)
+    console.log('[TestPlayerSlot] Ticket:', (state as any).ticket)
+    console.log('[TestPlayerSlot] WHEP URL:', whepUrl)
+  }, [state.status, whepUrl])
+
+  const { state: webrtcState, error: webrtcError } = useWebRTCPlayer({
+    whepUrl,
+    videoRef,
+    autoPlay: true,
+  })
 
   // mode가 'thumb'일 때는 썸네일 스타일
   if (mode === 'thumb') {
@@ -116,7 +129,7 @@ export default function TestPlayerSlot({
             border: '1px solid rgba(255, 255, 255, 0.1)',
           }}
         >
-          {streamId} / {state.status}
+          {streamId} / {webrtcState}
         </div>
 
         {/* 상태 뱃지 */}
@@ -137,21 +150,30 @@ export default function TestPlayerSlot({
           {badgeText}
         </div>
 
-        {state.status === 'playing' ? (
-          <video
-            ref={videoRef}
-            src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-            }}
-          />
-        ) : (
+        {/* 비디오 엘리먼트는 항상 렌더링 (WebRTC가 srcObject를 설정해야 함) */}
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          playsInline
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            display:
+              state.status === 'playing' ||
+              webrtcState === 'playing' ||
+              webrtcState === 'connected'
+                ? 'block'
+                : 'none',
+          }}
+        />
+        {/* 로딩/에러 상태 표시 */}
+        {!(
+          state.status === 'playing' ||
+          webrtcState === 'playing' ||
+          webrtcState === 'connected'
+        ) && (
           <div
             style={{
               width: '100%',
@@ -164,7 +186,7 @@ export default function TestPlayerSlot({
               backgroundColor: '#1a1a1a',
             }}
           >
-            {state.status}
+            {webrtcError || state.status}
           </div>
         )}
       </button>
@@ -225,21 +247,30 @@ export default function TestPlayerSlot({
       </div>
 
       {/* 비디오 영역 */}
-      {state.status === 'playing' ? (
-        <video
-          ref={videoRef}
-          src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-          }}
-        />
-      ) : (
+      {/* 비디오 엘리먼트는 항상 렌더링 (WebRTC가 srcObject를 설정해야 함) */}
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        playsInline
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'contain',
+          display:
+            state.status === 'playing' ||
+            webrtcState === 'playing' ||
+            webrtcState === 'connected'
+              ? 'block'
+              : 'none',
+        }}
+      />
+      {/* 로딩/에러 상태 표시 */}
+      {!(
+        state.status === 'playing' ||
+        webrtcState === 'playing' ||
+        webrtcState === 'connected'
+      ) && (
         <div
           style={{
             width: '100%',
@@ -252,7 +283,7 @@ export default function TestPlayerSlot({
             backgroundColor: '#1a1a1a',
           }}
         >
-          {state.status}
+          {webrtcError || state.status}
         </div>
       )}
     </div>

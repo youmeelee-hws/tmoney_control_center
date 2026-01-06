@@ -74,7 +74,6 @@ const StreamingPage: React.FC = () => {
                     streamId={'stream-001'}
                     mode="main"
                     onStatusChange={status => {
-                      // rendering 상태가 되면 실제 비디오 프레임이 화면에 표시됨
                       setIsLoading(status !== 'rendering')
                     }}
                   />

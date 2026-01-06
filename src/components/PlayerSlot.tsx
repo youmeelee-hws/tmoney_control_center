@@ -68,43 +68,6 @@ export default function PlayerSlot({
         aria-label={streamId}
         title={streamId}
       >
-        {/* 라벨 */}
-        {/* <div
-          style={{
-            position: 'absolute',
-            top: '0.8rem',
-            left: '0.8rem',
-            padding: '0.4rem 0.8rem',
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            color: '#fff',
-            borderRadius: '0.5rem',
-            fontSize: '1.1rem',
-            fontWeight: 500,
-            zIndex: 10,
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-          }}
-        >
-          {streamId} / {state.status}
-        </div> */}
-
-        {/* 상태 뱃지 */}
-        {/* <div
-          style={{
-            position: 'absolute',
-            top: '0.8rem',
-            right: '0.8rem',
-            padding: '0.4rem 0.8rem',
-            backgroundColor: badgeColor,
-            color: '#fff',
-            borderRadius: '0.5rem',
-            fontSize: '1.1rem',
-            fontWeight: 500,
-            zIndex: 10,
-          }}
-        >
-          {badgeText}
-        </div> */}
-
         {/* 비디오 엘리먼트는 항상 렌더링 (WebRTC가 srcObject를 설정해야 함) */}
         <video
           ref={videoRef}
@@ -130,79 +93,14 @@ export default function PlayerSlot({
           webrtcState === 'playing' ||
           webrtcState === 'connected' ||
           webrtcState === 'rendering'
-        ) && (
-          <div
-          // style={{
-          //   width: '100%',
-          //   height: '100%',
-          //   display: 'flex',
-          //   alignItems: 'center',
-          //   justifyContent: 'center',
-          //   color: 'rgba(255, 255, 255, 0.5)',
-          //   fontSize: '1.2rem',
-          //   backgroundColor: '#1a1a1a',
-          // }}
-          >
-            {webrtcError || state.status}
-          </div>
-        )}
+        ) && <div>{webrtcError || state.status}</div>}
       </button>
     )
   }
 
   // mode가 'main'일 때는 메인 화면 스타일
   return (
-    <div
-    // style={{
-    //   position: 'relative',
-    //   width: '100%',
-    //   height: '100%',
-    //   backgroundColor: '#000',
-    //   overflow: 'hidden',
-    //   border: isDetected ? '4px solid #f6335a' : 'none',
-    //   boxShadow: isDetected
-    //     ? '0 0 30px rgba(246, 51, 90, 0.7), 0 0 60px rgba(246, 51, 90, 0.5), inset 0 0 30px rgba(246, 51, 90, 0.2)'
-    //     : 'none',
-    //   animation: isDetected ? 'pulse 2s ease-in-out infinite' : 'none',
-    // }}
-    >
-      {/* 상태 표시 */}
-      {/* <div
-        style={{
-          position: 'absolute',
-          top: '2rem',
-          left: '2rem',
-          padding: '1rem 2rem',
-          backgroundColor: 'rgba(0, 0, 0, 0.8)',
-          color: '#fff',
-          borderRadius: '1rem',
-          fontSize: '1.5rem',
-          fontWeight: 500,
-          zIndex: 10,
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-        }}
-      >
-        {streamId} / {state.status}
-      </div> */}
-
-      {/* 상태 뱃지 */}
-      {/* <div
-        style={{
-          position: 'absolute',
-          top: '2rem',
-          right: '2rem',
-          padding: '1rem 2rem',
-          backgroundColor: badgeColor,
-          color: '#fff',
-          borderRadius: '1rem',
-          fontSize: '1.5rem',
-          fontWeight: 500,
-          zIndex: 10,
-        }}
-      >
-        {badgeText}
-      </div> */}
-
+    <div>
       {/* 비디오 영역 */}
       {/* 비디오 엘리먼트는 항상 렌더링 (WebRTC가 srcObject를 설정해야 함) */}
       <video
@@ -229,22 +127,7 @@ export default function PlayerSlot({
         webrtcState === 'playing' ||
         webrtcState === 'connected' ||
         webrtcState === 'rendering'
-      ) && (
-        <div
-        // style={{
-        //   width: '100%',
-        //   height: '100%',
-        //   display: 'flex',
-        //   alignItems: 'center',
-        //   justifyContent: 'center',
-        //   color: 'rgba(255, 255, 255, 0.5)',
-        //   fontSize: '1.8rem',
-        //   backgroundColor: '#1a1a1a',
-        // }}
-        >
-          {webrtcError || state.status}
-        </div>
-      )}
+      ) && <div>{webrtcError || state.status}</div>}
     </div>
   )
 }

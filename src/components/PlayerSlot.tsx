@@ -47,6 +47,7 @@ export default function PlayerSlot({
     whepUrl,
     videoRef,
     autoPlay: true,
+    streamId,
   })
 
   // 상태 변경 시 부모에게 알림

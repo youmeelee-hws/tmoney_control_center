@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { logMediaMTXError } from '@/api/errorLogs'
 
 /**
  * WebRTC 플레이어의 현재 상태를 나타내는 타입
@@ -21,6 +22,7 @@ interface UseWebRTCPlayerOptions {
   whepUrl: string // 스트림 서버 주소 (예: http://192.168.0.10:8889/stream1/whep)
   videoRef: React.RefObject<HTMLVideoElement> // <video> 태그의 ref (영상을 보여줄 곳)
   autoPlay?: boolean // 연결되면 자동으로 재생할지 여부
+  streamId?: string // 스트림 ID (로깅용)
 }
 
 /**
@@ -42,6 +44,7 @@ export function useWebRTCPlayer({
   whepUrl,
   videoRef,
   autoPlay = true,
+  streamId = 'unknown',
 }: UseWebRTCPlayerOptions) {
   // 현재 연결 상태 (idle, connecting, connected, rendering 등)
   const [state, setState] = useState<WebRTCPlayerState>('idle')
@@ -67,6 +70,78 @@ export function useWebRTCPlayer({
   // 🎧 비디오 이벤트 리스너를 이미 등록했는지 체크하는 플래그
   // - 중복 등록을 방지 (메모리 누수 방지)
   const videoEventListenersRef = useRef(false)
+
+  // 🔒 마지막 로그 전송 시간 기록 (중복 방지용)
+  const lastErrorLogRef = useRef<{
+    errorType: string
+    timestamp: number
+  } | null>(null)
+
+  /**
+   * 📝 MediaMTX 오류 로그 전송 헬퍼 함수
+   *
+   * MediaMTX 서버 다운 또는 연결 오류 발생 시에만 로그를 서버에 전송합니다.
+   * 같은 오류를 5분 이내에는 중복 전송하지 않습니다 (Debouncing).
+   *
+   * @param errorType 오류 유형
+   * @param errorMessage 오류 메시지
+   * @param statusCode HTTP 상태 코드 (있으면)
+   */
+  const sendErrorLog = async (
+    errorType:
+      | 'connection_failed'
+      | 'whep_post_failed'
+      | 'connection_closed'
+      | 'fetch_error'
+      | 'unknown',
+    errorMessage: string,
+    statusCode?: number
+  ) => {
+    // 🔒 중복 방지: 같은 오류를 5분 이내에는 다시 전송하지 않음
+    const now = Date.now()
+    const DEBOUNCE_MS = 5 * 60 * 1000 // 5분
+
+    if (lastErrorLogRef.current) {
+      const { errorType: lastType, timestamp: lastTime } =
+        lastErrorLogRef.current
+      if (lastType === errorType && now - lastTime < DEBOUNCE_MS) {
+        console.log(
+          `[WebRTC] Skipping duplicate error log: ${errorType} (last logged ${Math.floor(
+            (now - lastTime) / 1000
+          )}s ago)`
+        )
+        return
+      }
+    }
+
+    try {
+      // 클라이언트 정보 수집
+      const clientInfo = {
+        browserName: navigator.userAgent.split('(')[0]?.trim() || 'unknown',
+        browserVersion: navigator.appVersion || 'unknown',
+        os: navigator.platform || 'unknown',
+        screenResolution: `${window.screen.width}x${window.screen.height}`,
+      }
+
+      await logMediaMTXError({
+        streamId,
+        errorType,
+        errorMessage,
+        statusCode,
+        whepUrl,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        clientInfo,
+      })
+
+      // ✅ 성공 시 기록 (다음 중복 체크에 사용)
+      lastErrorLogRef.current = { errorType, timestamp: now }
+      console.log('[WebRTC] Error logged successfully:', errorType)
+    } catch (logError) {
+      // 로깅 실패는 조용히 무시 (사용자 경험에 영향 없음)
+      console.warn('[WebRTC] Failed to log error:', logError)
+    }
+  }
 
   /**
    * 🧊 ICE Candidate 수집 완료를 기다리는 함수
@@ -231,6 +306,10 @@ export function useWebRTCPlayer({
           if (!disconnectedRef.current) {
             const msg = `Connection ${pc.connectionState}`
             console.error('[WebRTC]', msg)
+
+            // 🔴 연결 실패/종료 로그 전송
+            sendErrorLog('connection_closed', msg).catch(() => {})
+
             setError(msg)
             setState('error')
           }
@@ -266,7 +345,12 @@ export function useWebRTCPlayer({
 
       if (!resp.ok) {
         const txt = await resp.text().catch(() => '')
-        throw new Error(`WHEP POST failed: ${resp.status} ${txt}`)
+        const errorMsg = `WHEP POST failed: ${resp.status} ${txt}`
+
+        // 🔴 MediaMTX 서버 오류 로그 전송
+        await sendErrorLog('whep_post_failed', errorMsg, resp.status)
+
+        throw new Error(errorMsg)
       }
 
       // 📍 Location 헤더에서 세션 URL 추출
@@ -293,7 +377,31 @@ export function useWebRTCPlayer({
       // 이제 ontrack 이벤트가 자동으로 발생하고, 비디오가 재생됨!
     } catch (err: any) {
       console.error('WebRTC playback error:', err)
-      setError(err?.message || 'Unknown error')
+
+      // 🔴 오류 유형 판별 및 로그 전송
+      const errorMessage = err?.message || 'Unknown error'
+      let errorType:
+        | 'connection_failed'
+        | 'whep_post_failed'
+        | 'connection_closed'
+        | 'fetch_error'
+        | 'unknown' = 'unknown'
+
+      // fetch 오류 (네트워크 연결 실패, 서버 다운 등)
+      if (err instanceof TypeError && errorMessage.includes('fetch')) {
+        errorType = 'fetch_error'
+        await sendErrorLog(errorType, `Network error: ${errorMessage}`)
+      }
+      // WHEP POST 실패는 이미 위에서 처리됨
+      else if (errorMessage.includes('WHEP POST failed')) {
+        // 이미 로그 전송됨
+      }
+      // 기타 오류
+      else {
+        await sendErrorLog(errorType, errorMessage)
+      }
+
+      setError(errorMessage)
       setState('error')
       stopPlayback()
     }

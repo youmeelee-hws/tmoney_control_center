@@ -75,6 +75,7 @@ export default function TestPlayerSlot({
     whepUrl,
     videoRef,
     autoPlay: true,
+    streamId,
   })
 
   // mode가 'thumb'일 때는 썸네일 스타일

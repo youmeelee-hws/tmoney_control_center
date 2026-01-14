@@ -118,13 +118,13 @@ export default function TestPlayerSlot({
         <div
           style={{
             position: 'absolute',
-            top: '0.8rem',
-            left: '0.8rem',
+            top: '0.5rem',
+            left: '0.5rem',
             padding: '0.4rem 0.8rem',
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             color: '#fff',
-            borderRadius: '0.5rem',
-            fontSize: '1.1rem',
+            borderRadius: '0.4rem',
+            fontSize: '1.2rem',
             fontWeight: 500,
             zIndex: 10,
             border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -137,13 +137,13 @@ export default function TestPlayerSlot({
         <div
           style={{
             position: 'absolute',
-            top: '0.8rem',
-            right: '0.8rem',
+            top: '0.5rem',
+            right: '0.5rem',
             padding: '0.4rem 0.8rem',
             backgroundColor: badgeColor,
             color: '#fff',
-            borderRadius: '0.5rem',
-            fontSize: '1.1rem',
+            borderRadius: '0.4rem',
+            fontSize: '1.2rem',
             fontWeight: 500,
             zIndex: 10,
           }}
@@ -214,13 +214,13 @@ export default function TestPlayerSlot({
       <div
         style={{
           position: 'absolute',
-          top: '2rem',
-          left: '2rem',
-          padding: '1rem 2rem',
+          top: '0.5rem',
+          left: '0.5rem',
+          padding: '0.4rem 0.8rem',
           backgroundColor: 'rgba(0, 0, 0, 0.8)',
           color: '#fff',
-          borderRadius: '1rem',
-          fontSize: '1.5rem',
+          borderRadius: '0.4rem',
+          fontSize: '1.2rem',
           fontWeight: 500,
           zIndex: 10,
           border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -233,13 +233,13 @@ export default function TestPlayerSlot({
       <div
         style={{
           position: 'absolute',
-          top: '2rem',
-          right: '2rem',
-          padding: '1rem 2rem',
+          top: '0.5rem',
+          right: '0.5rem',
+          padding: '0.4rem 0.8rem',
           backgroundColor: badgeColor,
           color: '#fff',
-          borderRadius: '1rem',
-          fontSize: '1.5rem',
+          borderRadius: '0.4rem',
+          fontSize: '1.2rem',
           fontWeight: 500,
           zIndex: 10,
         }}

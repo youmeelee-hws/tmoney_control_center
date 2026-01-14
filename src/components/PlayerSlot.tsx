@@ -101,7 +101,15 @@ export default function PlayerSlot({
 
   // mode가 'main'일 때는 메인 화면 스타일
   return (
-    <div>
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#000',
+        overflow: 'hidden',
+      }}
+    >
       {/* 비디오 영역 */}
       {/* 비디오 엘리먼트는 항상 렌더링 (WebRTC가 srcObject를 설정해야 함) */}
       <video
@@ -128,7 +136,21 @@ export default function PlayerSlot({
         webrtcState === 'playing' ||
         webrtcState === 'connected' ||
         webrtcState === 'rendering'
-      ) && <div>{webrtcError || state.status}</div>}
+      ) && (
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'rgba(255, 255, 255, 0.5)',
+            fontSize: '1.6rem',
+          }}
+        >
+          {webrtcError || state.status}
+        </div>
+      )}
     </div>
   )
 }
